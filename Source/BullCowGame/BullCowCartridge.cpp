@@ -2,6 +2,7 @@
 #include "BullCowCartridge.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
+#include "Containers/UnrealString.h"
 
 
 
@@ -13,8 +14,13 @@ void UBullCowCartridge::BeginPlay() // When the game starts
   
     SetupGame();
 
-    PrintLine(TEXT("The Hidden Word is: %s"), *HiddenWord); // Debug line
+    PrintLine(TEXT("The number of possible words is %i."), Words.Num());
+    PrintLine(TEXT("The Hidden Word is: %s."), *HiddenWord); // Debug line
 
+    for (int32 Index = 0; Index < 5; Index++)
+    {
+        PrintLine(TEXT("Word #%i is %s."), Index, *Words[Index]);
+    }
 }
 
 void UBullCowCartridge::OnInput(const FString& Input) // When the player hits enter
@@ -47,11 +53,6 @@ void UBullCowCartridge::SetupGame()
     PrintLine(TEXT("Try to guess the %i letter word."), HiddenWord.Len());
     PrintLine(TEXT("You have %i lives."), Lives);
     PrintLine(TEXT("Type in your guess."));
-
-    //const TCHAR HW[] = TEXT("plums");
-    //PrintLine(TEXT("Character 1 of the hidden word is: %c"), HiddenWord[0]);
-    //PrintLine(TEXT("Character 4 of the HW array is: %c"), HW[3]);
-
 }
 
 void UBullCowCartridge::EndGame()
@@ -106,10 +107,8 @@ bool UBullCowCartridge::IsIsogram(FString Word) const
 {
     for (int32 Index = 0; Index < Word.Len(); Index++)
     {
-        PrintLine(TEXT("Index Loop : %c"), Word[Index]);
         for (int32 Comparison = Index + 1; Comparison < Word.Len(); Comparison++)
         {
-            PrintLine(TEXT("Compare Loop : %c"), Word[Comparison]);
             if (Word[Index] == Word[Comparison])
             {
                 return false;
