@@ -2,10 +2,11 @@
 
 #include "CoreMinimal.h"
 
-const TArray<int32> Numbers =
+const TArray<FString> Words =
 {
-	1,
-	2,
-	3,
-	4
+	TEXT("cakes"),
+	TEXT("water"),
+	TEXT("plums"),
+	TEXT("kings"),
+	TEXT("knife")
 };
