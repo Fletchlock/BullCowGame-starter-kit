@@ -5,13 +5,18 @@
 #include "Containers/UnrealString.h"
 
 
+
 // Assign path to HiddenWordList.txt and create String Array from the .txt file called Words
 // Run SetupGame()
 void UBullCowCartridge::BeginPlay() // When the game starts
 {
     Super::BeginPlay();
+
+    FMath::RandRange
+
     const FString WordListPath = FPaths::ProjectContentDir() / TEXT("WordLists/HiddenWordList.txt");
     FFileHelper::LoadFileToStringArray(Words, *WordListPath);
+
     SetupGame();
 
     PrintLine(TEXT("The number of possible words is %i."), Words.Num());
@@ -22,7 +27,7 @@ void UBullCowCartridge::BeginPlay() // When the game starts
 // Checks what the player input on Enter key pressed
 // If gave was over, clear screen and start new game
 // Else run ProcessGuess(Input) with Input passed in order to compare it to the hidden word
-void UBullCowCartridge::OnInput(const FString& Input)
+void UBullCowCartridge::OnInput(const FString& PlayerInput)
 {
     if (bGameOver)
     {
@@ -31,7 +36,7 @@ void UBullCowCartridge::OnInput(const FString& Input)
     }
     else
     {
-        ProcessGuess(Input);        
+        ProcessGuess(PlayerInput);        
     }
      //PlayAgain or Quit
 }
@@ -63,7 +68,7 @@ void UBullCowCartridge::EndGame()
 // Run comparisons to check player input Guess against the hidden word
 // Check for length of word as well as if IsIsogram(Guess) with the Guess passed to the function (Guess is Input)
 // See comments within function for more details
-void UBullCowCartridge::ProcessGuess(FString Guess)
+void UBullCowCartridge::ProcessGuess(const FString& Guess)
 {
     PrintLine(TEXT("You guessed %s"), *Guess);
 
@@ -105,7 +110,7 @@ void UBullCowCartridge::ProcessGuess(FString Guess)
 }
 
 // Loops through the Word array declared in BeginPlay() and checks each index looking for the same letter
-bool UBullCowCartridge::IsIsogram(FString Word) const
+bool UBullCowCartridge::IsIsogram(const FString& Word) const
 {
     for (int32 Index = 0; Index < Word.Len(); Index++)
     {
@@ -127,16 +132,16 @@ bool UBullCowCartridge::IsIsogram(FString Word) const
     //if any letters are the same return false.
 }
 
-// Loops through the WordList array and creates new array based on length of word and if is an Isogram
+// Loops through the WordList array and creates new array based on length of the word and if is an Isogram
 // Returns the new array ValidWords
-TArray<FString> UBullCowCartridge::GetValidWords(TArray<FString> WordList) const
+TArray<FString> UBullCowCartridge::GetValidWords(const TArray<FString>& WordList) const
 {
     TArray<FString> ValidWords;
-    for (int32 Index = 0; Index < WordList.Num(); Index++)
+    for (FString Word : WordList)
     {
-        if (WordList[Index].Len() >= 4 && WordList[Index].Len() <= 8 && IsIsogram(WordList[Index]))
+        if (Word.Len() >= 4 && Word.Len() <= 8 && IsIsogram(Word))
         {
-            ValidWords.Emplace(WordList[Index]);
+            ValidWords.Emplace(Word);
         }
     }
     return ValidWords;
