@@ -5,7 +5,7 @@
 #include "Containers/UnrealString.h"
 
 
-// Assign path to HiddenWordList.txt and create String Array from the .txt file called Words
+// Assign path to HiddenWordList.txt and create String Array from the .txt file called Isograms using a lambda to return length and isogram
 // Run SetupGame()
 void UBullCowCartridge::BeginPlay() // When the game starts
 {
@@ -39,7 +39,6 @@ void UBullCowCartridge::OnInput(const FString& PlayerInput)
 
 // Set up the game with instructions and define the hidden word as well as number of lives (guesses?)
 // Set game over boolian to false
-// Set HiddenWord to a random word using GetValidWords(Words) and RandHelper using the Num in array passed to function 
 void UBullCowCartridge::SetupGame()
 {
     PrintLine(TEXT("Welcome to the Bull Cow Game!"));
@@ -123,11 +122,5 @@ bool UBullCowCartridge::IsIsogram(const FString& Word)
     }
 
     return true;
-
-    //for each letter.
-    //Start at element [0].
-    //Compare against the next letter.
-    //Until we reach [Word.Len() -1].
-    //if any letters are the same return false.
 }
 
