@@ -5,23 +5,19 @@
 #include "Containers/UnrealString.h"
 
 
-
 // Assign path to HiddenWordList.txt and create String Array from the .txt file called Words
 // Run SetupGame()
 void UBullCowCartridge::BeginPlay() // When the game starts
 {
     Super::BeginPlay();
 
-    FMath::RandRange
-
     const FString WordListPath = FPaths::ProjectContentDir() / TEXT("WordLists/HiddenWordList.txt");
-    FFileHelper::LoadFileToStringArray(Words, *WordListPath);
+    FFileHelper::LoadFileToStringArrayWithPredicate(Isograms, *WordListPath, [](const FString& Word)
+        {
+            return Word.Len() > 3 && Word.Len() < 8 && IsIsogram(Word);
+        });
 
     SetupGame();
-
-    PrintLine(TEXT("The number of possible words is %i."), Words.Num());
-    PrintLine(TEXT("The number of isogram words is %i."), GetValidWords(Words).Num());
-    PrintLine(TEXT("The Hidden Word is: %s."), *HiddenWord); // Debug line
 }
 
 // Checks what the player input on Enter key pressed
@@ -43,17 +39,20 @@ void UBullCowCartridge::OnInput(const FString& PlayerInput)
 
 // Set up the game with instructions and define the hidden word as well as number of lives (guesses?)
 // Set game over boolian to false
+// Set HiddenWord to a random word using GetValidWords(Words) and RandHelper using the Num in array passed to function 
 void UBullCowCartridge::SetupGame()
 {
     PrintLine(TEXT("Welcome to the Bull Cow Game!"));
-
-    HiddenWord = TEXT("cars");   
+    
+    const int32 Rnd = FMath::RandHelper(Isograms.Num());
+    HiddenWord = Isograms[Rnd];
     Lives = HiddenWord.Len();
     bGameOver = false;
 
     PrintLine(TEXT("Try to guess the %i letter word."), HiddenWord.Len());
     PrintLine(TEXT("You have %i lives."), Lives);
     PrintLine(TEXT("Type in your guess."));
+    PrintLine(TEXT("The Hidden Word is: %s."), *HiddenWord); // Debug line
 }
 
 // Set game over boolian to true
@@ -110,7 +109,7 @@ void UBullCowCartridge::ProcessGuess(const FString& Guess)
 }
 
 // Loops through the Word array declared in BeginPlay() and checks each index looking for the same letter
-bool UBullCowCartridge::IsIsogram(const FString& Word) const
+bool UBullCowCartridge::IsIsogram(const FString& Word)
 {
     for (int32 Index = 0; Index < Word.Len(); Index++)
     {
@@ -132,17 +131,3 @@ bool UBullCowCartridge::IsIsogram(const FString& Word) const
     //if any letters are the same return false.
 }
 
-// Loops through the WordList array and creates new array based on length of the word and if is an Isogram
-// Returns the new array ValidWords
-TArray<FString> UBullCowCartridge::GetValidWords(const TArray<FString>& WordList) const
-{
-    TArray<FString> ValidWords;
-    for (FString Word : WordList)
-    {
-        if (Word.Len() >= 4 && Word.Len() <= 8 && IsIsogram(Word))
-        {
-            ValidWords.Emplace(Word);
-        }
-    }
-    return ValidWords;
-}
